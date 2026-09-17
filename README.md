@@ -3,7 +3,9 @@
 A focus timer that runs in your browser, built with Streamlit. Work in focused
 intervals, take a short break after each one, and a longer break after every few.
 
-## Run it
+**[Use it here → 🍅](https://another-pomodoro-clock.streamlit.app/)**
+
+## Run it locally
 
 ```bash
 ./run.sh
@@ -47,6 +49,8 @@ Shortcuts are ignored while you're typing in a text field.
 
 - **Keep the tab open.** State lives in the Streamlit session, so closing the
   tab or reloading resets the timer and the log.
+- **Everyone gets their own clock.** Session state isn't shared, so two people on
+  the hosted link run independent timers and see only their own log.
 - **Skip vs. finish.** A pomodoro only counts toward your stats when the clock
   runs it out. Skipping moves to the next phase without crediting it, and leaves
   the new phase paused so you can adjust things first.
@@ -56,10 +60,25 @@ Shortcuts are ignored while you're typing in a text field.
 - Changing a duration while the clock is paused updates it immediately; changing
   it mid-phase applies from the next time that phase comes around.
 
+## Deploying
+
+The hosted copy runs on [Streamlit Community Cloud][cloud] from `main` of this
+repo, with `app.py` as the entrypoint. Push to `main` and it redeploys itself.
+
+Two things worth knowing:
+
+- **`requirements.txt` is the deploy's dependency list.** Cloud installs from it
+  on every rebuild, so the `streamlit>=1.64` floor matters: `app.py` calls
+  `st.button(shortcut=...)` and `width="stretch"`, which older releases reject
+  outright.
+- **The app sleeps when idle.** A first visit after a quiet spell takes a few
+  seconds to wake. It won't drop a running timer out from under you: an open tab
+  holds a live connection, which counts as activity.
+
 ## Layout
 
 | File               | Purpose                                      |
 | ------------------ | -------------------------------------------- |
 | `app.py`           | The whole app — timer, UI, chime synthesis    |
 | `run.sh`           | Bootstraps the venv and launches Streamlit    |
-| `requirements.txt` | Python dependencies (Streamlit only)          |
+| `requirements.txt` | Python dependencies                           |
