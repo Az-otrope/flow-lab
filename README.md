@@ -35,6 +35,9 @@ python3 -m venv .venv && .venv/bin/pip install -r requirements.txt && .venv/bin/
 - **Session tracking** — pomodoros completed, total focus time, and a log of
   what you worked on. Tag the current pomodoro in the "What are you working on?"
   box and the label lands in the log.
+- **Two themes**, switchable from the sidebar. *Plain* is the default; *Arcane*
+  redraws the clock as a glowing spell circle over a starfield. See
+  [Themes](#themes).
 
 ## Keyboard shortcuts
 
@@ -44,6 +47,58 @@ python3 -m venv .venv && .venv/bin/pip install -r requirements.txt && .venv/bin/
 | `N`     | Skip phase    |
 
 Shortcuts are ignored while you're typing in a text field.
+
+## Themes
+
+Switch in the sidebar. **Plain** is the default and is exactly what it sounds
+like. **Arcane** is a full redraw, not a recolour:
+
+- The ring becomes a spell circle — sixty tick marks, a gradient arc with a
+  soft glow, and a lit tip that tracks the leading edge as the phase burns down.
+- Phases are renamed (Incantation / Respite / Long Rest) with matching
+  completion messages, and the clock sits in a framed panel over a nebula
+  backdrop with two drifting star layers, one of which twinkles.
+- Display type is [Cinzel][cinzel]; the primary button is tinted to whichever
+  phase is running.
+
+A theme is one `Skin` in `app.py`: names, emoji, messages, per-phase colours,
+and a CSS template whose bare-word tokens (`BASE_BG`, `STAR`, `CARD_BORDER`…)
+are filled per chrome. Adding a third means adding an entry to `SKINS`.
+
+Two things worth knowing about how it is built:
+
+- **Almost no assets.** The starfield is tiled radial gradients and the ring is
+  inline SVG, so there are no images. The one exception is Cinzel, which loads
+  from Google Fonts behind a system-serif fallback — the clock stays readable
+  if that request is slow or blocked, because the SVG time is drawn at a fixed
+  `textLength` and so never reflows.
+- **No fighting Streamlit for the widgets.** Each skin carries a light *and* a
+  dark variant and layers onto whichever chrome you already use, rather than
+  restyling every input. The only widgets it touches are the sidebar panel and
+  the buttons.
+
+### Light and dark
+
+Use the **⋮ menu, top right** — the first row is `System / Light / Dark`. It's
+Streamlit's own control; the skins follow it. `System` tracks your OS, which is
+why you'll only ever see one of the two until you pick explicitly.
+
+The palette is chosen *in the browser*, not on the server. Every value that
+differs between light and dark is a CSS custom property defined under
+`html[data-chrome="light"]` and `html[data-chrome="dark"]`, and a small guarded
+script sets that attribute from the background colour Streamlit actually
+painted. The server only ever decides which phase is lit
+(`:root { --accent: var(--c-work) }`).
+
+That indirection is load-bearing. `st.context.theme.type` still reports the
+*previous* theme during the rerun that a theme change triggers, so anything
+chosen server-side renders one flip behind — which looked like dark widgets on
+a parchment background. Doing it in CSS means the switch can't be a step late.
+If the script is ever blocked, `prefers-color-scheme` supplies the fallback.
+
+Both star layers stop moving under `prefers-reduced-motion`.
+
+[cinzel]: https://fonts.google.com/specimen/Cinzel
 
 ## Notes
 
