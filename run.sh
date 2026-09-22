@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Start the Pomodoro clock. Creates the venv on first run.
+# Start Flow Lab. Creates the venv on first run.
 set -euo pipefail
 cd "$(dirname "$0")"
 

@@ -2,7 +2,7 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "pomodoro",
+      "name": "flow-lab",
       "runtimeExecutable": ".venv/bin/streamlit",
       "runtimeArgs": [
         "run",

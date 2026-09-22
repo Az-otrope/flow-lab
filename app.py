@@ -1,8 +1,9 @@
-"""Pomodoro Clock — a focus timer you run in the browser.
+"""Flow Lab — find your focus rhythm.
 
-Classic Pomodoro technique: work in focused intervals, take a short break after
-each one, and a longer break after every few. Durations are configurable in the
-sidebar; the timer is deadline-based so it never drifts, even if a tick is late.
+A focus timer built around the Pomodoro technique: work in focused intervals,
+take a short break after each one, and a longer break after every few.
+Durations are configurable in the sidebar; the timer is deadline-based so it
+never drifts, even if a tick is late.
 
 Run it with:  streamlit run app.py
 """
@@ -751,7 +752,7 @@ def play_chime(kind: str, message: str) -> None:
 <script>
   try {{
     if (window.Notification && Notification.permission === "granted") {{
-      new Notification("Pomodoro Clock", {{ body: {body} }});
+      new Notification("Flow Lab", {{ body: {body} }});
     }}
   }} catch (e) {{}}
 </script>
@@ -813,7 +814,7 @@ def ask_notify_permission() -> None:
 
 def main() -> None:
     init_state()
-    st.set_page_config(page_title="Pomodoro Clock", layout="centered",
+    st.set_page_config(page_title="Flow Lab", layout="centered",
                        page_icon=phase_emoji("work"))
     sidebar()
     st.markdown(page_css(), unsafe_allow_html=True)

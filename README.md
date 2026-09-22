@@ -1,9 +1,12 @@
-# 🍅 Pomodoro Clock
+# 🌊 Flow Lab
 
-A focus timer that runs in your browser, built with Streamlit. Work in focused
-intervals, take a short break after each one, and a longer break after every few.
+*Find your focus rhythm.*
 
-**[Use it here → 🍅](https://another-pomodoro-clock.streamlit.app/)**
+A focus timer that runs in your browser, built with Streamlit. Today it runs the
+Pomodoro method — focused intervals, a short break after each, a longer break
+after every few — with more methods planned.
+
+**[Use it here → 🌊](https://flow-lab.streamlit.app/)**
 
 ## Run it locally
 
