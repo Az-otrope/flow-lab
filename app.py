@@ -129,6 +129,17 @@ def go_to(phase: str, autostart: bool) -> None:
         start()
 
 
+def next_break(completed: int, every: int) -> str:
+    """Which break follows a work phase, for a given credited count.
+
+    A long break is earned, so it is due only once at least one pomodoro has
+    been credited and the count has landed on a multiple. Both the finish path
+    and the skip path ask this, so they cannot drift apart.
+    """
+    every = max(1, every)
+    return "long" if completed > 0 and completed % every == 0 else "short"
+
+
 def finish_phase() -> None:
     """Called when the clock reaches zero on its own."""
     phase = st.session_state.phase
@@ -143,8 +154,8 @@ def finish_phase() -> None:
                 "Focus": st.session_state.task.strip() or "—",
             }
         )
-        every = max(1, int(st.session_state.long_every))
-        next_phase = "long" if st.session_state.completed % every == 0 else "short"
+        next_phase = next_break(st.session_state.completed,
+                                int(st.session_state.long_every))
     else:
         next_phase = "work"
 
@@ -155,11 +166,15 @@ def finish_phase() -> None:
 
 
 def skip() -> None:
-    """Jump to the next phase without crediting the current one."""
+    """Jump to the next phase without crediting the current one.
+
+    Because nothing is credited, the cycle position is unchanged -- skipping
+    four focus phases leaves you exactly as far from a long break as you were.
+    """
     phase = st.session_state.phase
     if phase == "work":
-        every = max(1, int(st.session_state.long_every))
-        nxt = "long" if (st.session_state.completed + 1) % every == 0 else "short"
+        nxt = next_break(st.session_state.completed,
+                         int(st.session_state.long_every))
     else:
         nxt = "work"
     go_to(nxt, autostart=False)

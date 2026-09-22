@@ -51,9 +51,14 @@ Shortcuts are ignored while you're typing in a text field.
   tab or reloading resets the timer and the log.
 - **Everyone gets their own clock.** Session state isn't shared, so two people on
   the hosted link run independent timers and see only their own log.
-- **Skip vs. finish.** A pomodoro only counts toward your stats when the clock
-  runs it out. Skipping moves to the next phase without crediting it, and leaves
-  the new phase paused so you can adjust things first.
+- **Skip vs. finish.** A pomodoro counts only when the clock runs it out.
+  Skipping moves to the next phase without crediting it and leaves that phase
+  paused, so you can adjust things first.
+- **Skipping doesn't advance the cycle.** Since nothing is credited, skipping
+  through four focus phases leaves you at `0/4 to long break` — the long break
+  is earned by finishing focus phases, not by passing through them. To reach one
+  quickly, set **Focus** to 1 minute, or set **Long break every** to 1 and
+  finish a single focus phase.
 - **Browser autoplay.** The end-of-phase chime plays because starting the timer
   counts as the user gesture browsers require. Allow notifications when prompted
   if you want an alert while the tab is in the background.
