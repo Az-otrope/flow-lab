@@ -64,6 +64,9 @@ DEFAULTS: dict[str, object] = {
     "running": False,
     "deadline": None,   # epoch seconds; only meaningful while running
     "remaining": 25 * 60,
+    # The length this phase actually started with. Editing a duration mid-phase
+    # must not distort the ring or the caption of the phase already in flight.
+    "phase_total": 25 * 60,
     # history
     "completed": 0,
     "focus_seconds": 0,
@@ -98,6 +101,7 @@ def remaining_seconds() -> float:
 def start() -> None:
     if st.session_state.remaining <= 0:
         st.session_state.remaining = phase_seconds(st.session_state.phase)
+        st.session_state.phase_total = st.session_state.remaining
     st.session_state.deadline = time.time() + st.session_state.remaining
     st.session_state.running = True
 
@@ -112,11 +116,13 @@ def reset() -> None:
     st.session_state.running = False
     st.session_state.deadline = None
     st.session_state.remaining = phase_seconds(st.session_state.phase)
+    st.session_state.phase_total = st.session_state.remaining
 
 
 def go_to(phase: str, autostart: bool) -> None:
     st.session_state.phase = phase
     st.session_state.remaining = phase_seconds(phase)
+    st.session_state.phase_total = st.session_state.remaining
     st.session_state.running = False
     st.session_state.deadline = None
     if autostart:
@@ -160,9 +166,14 @@ def skip() -> None:
 
 
 def on_duration_change() -> None:
-    """Keep a paused clock in sync with an edited duration."""
+    """Keep a paused clock in sync with an edited duration.
+
+    A running clock keeps the length it started with; the new value applies the
+    next time that phase comes around.
+    """
     if not st.session_state.running:
         st.session_state.remaining = phase_seconds(st.session_state.phase)
+        st.session_state.phase_total = st.session_state.remaining
 
 
 def clear_history() -> None:
@@ -286,7 +297,7 @@ def sidebar() -> None:
 
 def clock_body() -> None:
     phase = PHASES[st.session_state.phase]
-    total = max(1, phase_seconds(phase.key))
+    total = max(1, int(st.session_state.phase_total))
     left = remaining_seconds()
 
     st.markdown(
@@ -298,7 +309,7 @@ def clock_body() -> None:
     )
     st.markdown(f'<div class="phase-sub">{sub}</div>', unsafe_allow_html=True)
 
-    caption = f"{int(st.session_state[phase.setting])} min {phase.label.lower()}"
+    caption = f"{total // 60} min {phase.label.lower()}"
     st.markdown(ring(left / total, phase.color, fmt_clock(left), caption),
                 unsafe_allow_html=True)
     st.markdown(dots(), unsafe_allow_html=True)

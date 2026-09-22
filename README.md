@@ -58,7 +58,8 @@ Shortcuts are ignored while you're typing in a text field.
   counts as the user gesture browsers require. Allow notifications when prompted
   if you want an alert while the tab is in the background.
 - Changing a duration while the clock is paused updates it immediately; changing
-  it mid-phase applies from the next time that phase comes around.
+  it mid-phase applies from the next time that phase comes around — the phase in
+  flight keeps the length it started with, ring and caption included.
 
 ## Deploying
 
